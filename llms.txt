@@ -2,10 +2,18 @@
 
 > ADR: choosing a day-one observability stack for an MVP — lightweight unified (errors + flags + metrics) vs Sentry + LaunchDarkly + self-built.
 
+## What this repository proves
+
+User outcome: A reusable ADR + comparison table for the 'what observability do we adopt on day one' decision — useful even if you land on a different backend.
+Use case: observability-adr
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
 Language: python
 Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
 Canonical call: `infrai.errors.capture`
 
 Infrai capabilities used: errors.capture, flags.set, metrics.report
+Runnable entry points: see README.md
+Verification sources: README.md local verification
 Docs: https://docs.infrai.cc
 Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt

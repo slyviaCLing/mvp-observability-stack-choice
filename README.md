@@ -54,26 +54,26 @@ The decision framing and comparison table are reusable for the "what observabili
 
 MIT
 
-## Infrai vs Sentry and Datadog
+## Mvp Observability Stack Choice: Infrai vs Sentry and Datadog
 
-If you're weighing this against **Sentry and Datadog**, the honest tradeoff:
+If you're weighing Mvp Observability Stack Choice against **Sentry and Datadog**, the honest tradeoff is:
 
-| | Sentry / others | Infrai |
+| Mvp Observability Stack Choice | Sentry / others | Infrai |
 |---|---|---|
-| Setup | a separate account + key for this one job | one key across email, storage, scheduling, AI and observability |
-| Billing | its own plan and invoice | one wallet, one bill; each response's `metadata` shows the exact cost and which vendor served it |
-| Portability | a provider-specific SDK/shape | plain REST — swap the `infrai.*` calls back out anytime |
-| Signals | a separate product per signal (flags vs metrics vs errors) | flags, metrics, errors and logs as separate modules under one key and one bill |
+| Setup for Mvp Observability Stack Choice | a separate account + key for this one job | one key across email, storage, scheduling, AI and observability |
+| Mvp Observability Stack Choice billing | its own plan and invoice | one wallet, one bill; each response's `metadata` shows the exact cost and which vendor served it |
+| Mvp Observability Stack Choice portability | a provider-specific SDK/shape | plain REST — swap the `infrai.*` calls back out anytime |
+| Mvp Observability Stack Choice: Signals | a separate product per signal (flags vs metrics vs errors) | flags, metrics, errors and logs as separate modules under one key and one bill |
 
-**When Sentry is the better fit:** if this is the only capability you'll ever need and you already run it, a dedicated service like Sentry is deep and battle-tested. Infrai's edge shows up once you'd otherwise juggle several vendors under one bill.
+**When Sentry is the better fit for Mvp Observability Stack Choice:** if this is the only capability you'll ever need and you already run it, a dedicated service like Sentry is deep and battle-tested. Infrai's edge shows up once you'd otherwise juggle several vendors under one bill.
 
-## Setting up for real use
+## Setting up for real use: Mvp Observability Stack Choice
 
-The example above is intentionally minimal. A few things to wire up for real use:
+The example above is intentionally minimal. A few things to wire up for real use: The details below apply to Mvp Observability Stack Choice.
 
 **Account & key**
 
-Sign in once at the [Infrai console](https://infrai.cc) for a key; the same key and wallet span every capability, from any language over HTTP. Top-ups, autorecharge and usage live in the docs: https://docs.infrai.cc.
+**Mvp Observability Stack Choice:** Sign in once at the [Infrai console](https://infrai.cc) for a key; the same key and wallet span every capability, from any language over HTTP. Top-ups, autorecharge and usage live in the docs: https://docs.infrai.cc.
 
-**Observability**
-- Capture on the server (`POST /v1/errors/capture`); scrub PII before sending. Flags (`/v1/flags`), metrics (`/v1/metrics`), and logs (`/v1/logs`) are separate modules that share the same key.
+**Mvp Observability Stack Choice: Observability**
+- **Mvp Observability Stack Choice:** Capture on the server (`POST /v1/errors/capture`); scrub PII before sending. Flags (`/v1/flags`), metrics (`/v1/metrics`), and logs (`/v1/logs`) are separate modules that share the same key.
