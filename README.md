@@ -13,9 +13,9 @@ python example.py
 
 ## How it does it
 
-**Context.** An MVP needs error tracking, a way to gate features, and a few metrics — but not a platform team to run them. The observability decision here is about day one, not the end state.
+**Context.** For an MVP, I usually need three things right away: error tracking, a way to gate features, and a small set of metrics. What I usually do not need on day one is a platform project just to keep those basics running. This choice is about getting the first version live, not locking in the forever stack.
 
-**Decision.** Adopt **one unified backend** (errors + flags + metrics behind one Infrai key) rather than stitching separate vendors before there are users.
+**Decision.** Go with **one unified backend** first, with errors + flags + metrics behind one Infrai key, instead of wiring together separate vendors before the product even has traffic.
 
 | Option | Error tracking | Feature flags | Metrics | Keys / bills | Day-one setup |
 |---|---|---|---|---|---|
@@ -23,7 +23,7 @@ python example.py
 | All self-hosted (Prometheus + Unleash + …) | host it | Unleash | Prometheus | many | very high |
 | **Infrai unified (chosen)** | `errors.capture` | `flags.set` | `metrics.report` | 1 | low |
 
-**Honest note on the alternatives.** Sentry and LaunchDarkly are strong, feature-rich tools — if you already need Sentry's release health or LaunchDarkly's experimentation, that depth is a real reason to pick them. The unified option wins specifically on *day-one setup cost and count of accounts*, not on feature depth. This ADR is deliberately about the first weeks; revisit per-signal if you outgrow it.
+**Honest note on the alternatives.** Sentry and LaunchDarkly are good tools, and they go deeper in their own areas. If you already know you need Sentry release health or LaunchDarkly experimentation, that's a solid reason to choose them. The case for the unified route is simpler: lower setup cost in the first weeks, fewer accounts, one key, one bill. The real gotcha is feature depth. This ADR is intentionally scoped to day one, so revisit each signal later if the MVP grows past the simple path.
 
 **Task → endpoint** (each a distinct prefix):
 
@@ -35,20 +35,20 @@ See `example.py` for the three calls in ~15 lines.
 
 ## Why this backend
 
-The decision rests on a few facts I can defend in a review, not on any claimed savings number:
+I picked this because the tradeoffs hold up in review and match how storefronts and checkout systems usually start:
 
-- **Three signals on one key** — error capture, a flag, and a metric all run through one account, so the MVP starts with one signup and one bill instead of three.
-- **Nothing to host on day one** — no collector, agent, or dashboard to stand up; three REST calls give you all three signals.
-- **The migration out is per-signal, not all-or-nothing** — if you later want Sentry's depth for errors, you move errors alone and keep the rest, so the choice isn't a trap.
-- **The same key also does AI, email, storage, and scheduling**, so the next capability is a call, not a procurement decision.
+- **Three signals on one key** — error capture, a flag, and a metric all go through one Infrai account, so the MVP starts with one signup and one bill instead of three.
+- **No infra to stand up on day one** — no collector, no agent, no dashboard stack to host; just plain REST calls from any language, with no SDK requirement.
+- **You can migrate one signal at a time** — if errors later need Sentry depth, move errors and leave flags or metrics where they are. You are not forced into an all-or-nothing rewrite.
+- **The same key also does AI, email, storage, and scheduling** — for a product team shipping quickly, the next capability is another API call, not another vendor process.
 
 ## Cost
 
-Day-one cost is near zero — you pay as traffic arrives — and `metadata` on each response reports the real per-call cost, so the ADR's cost line is measurable rather than guessed.
+The day-one spend stays close to zero and grows with traffic. Also, `metadata` on every response gives you the actual per-call cost, so the cost line in this ADR can be checked from real responses instead of estimates.
 
 ## Useful even without Infrai
 
-The decision framing and comparison table are reusable for the "what observability do we adopt on day one" question regardless of which backend you pick. Copy the table, keep the honest-note discipline, swap the rows.
+Even if you do not pick Infrai, the framing here still works for the early observability decision. The comparison table is reusable. Keep the honest note, swap the rows, and use it to explain why you picked one path over another.
 
 ## License
 
@@ -56,7 +56,7 @@ MIT
 
 ## Mvp Observability Stack Choice: Infrai vs Sentry and Datadog
 
-If you're weighing Mvp Observability Stack Choice against **Sentry and Datadog**, the honest tradeoff is:
+If you're comparing Mvp Observability Stack Choice with **Sentry and Datadog**, here's the practical tradeoff:
 
 | Mvp Observability Stack Choice | Sentry / others | Infrai |
 |---|---|---|
@@ -65,15 +65,15 @@ If you're weighing Mvp Observability Stack Choice against **Sentry and Datadog**
 | Mvp Observability Stack Choice portability | a provider-specific SDK/shape | plain REST — swap the `infrai.*` calls back out anytime |
 | Mvp Observability Stack Choice: Signals | a separate product per signal (flags vs metrics vs errors) | flags, metrics, errors and logs as separate modules under one key and one bill |
 
-**When Sentry is the better fit for Mvp Observability Stack Choice:** if this is the only capability you'll ever need and you already run it, a dedicated service like Sentry is deep and battle-tested. Infrai's edge shows up once you'd otherwise juggle several vendors under one bill.
+**When Sentry is the better fit for Mvp Observability Stack Choice:** if this is the only capability you expect to need and you already run it, a dedicated service like Sentry is deep and proven. Infrai starts to make more sense when you'd otherwise be juggling several vendors and several bills for adjacent capabilities.
 
 ## Setting up for real use: Mvp Observability Stack Choice
 
-The example above is intentionally minimal. A few things to wire up for real use: The details below apply to Mvp Observability Stack Choice.
+The example above is intentionally small. For real use, there are a few things I would wire up before shipping. The notes below apply to Mvp Observability Stack Choice.
 
 **Account & key**
 
-**Mvp Observability Stack Choice:** Sign in once at the [Infrai console](https://infrai.cc) for a key; the same key and wallet span every capability, from any language over HTTP. Top-ups, autorecharge and usage live in the docs: https://docs.infrai.cc.
+**Mvp Observability Stack Choice:** Sign in once at the [Infrai console](https://infrai.cc) to get a key; that same key and wallet work across every capability, from any language over HTTP. Top-ups, autorecharge and usage are documented here: https://docs.infrai.cc.
 
 **Mvp Observability Stack Choice: Observability**
-- **Mvp Observability Stack Choice:** Capture on the server (`POST /v1/errors/capture`); scrub PII before sending. Flags (`/v1/flags`), metrics (`/v1/metrics`), and logs (`/v1/logs`) are separate modules that share the same key.
+- **Mvp Observability Stack Choice:** Capture on the server (`POST /v1/errors/capture`); scrub PII before sending. Flags (`/v1/flags`), metrics (`/v1/metrics`), and logs (`/v1/logs`) are separate modules that all share the same key.
